@@ -8,7 +8,7 @@ const signUpValidation = [
     .isLength({ min: 3, max: 20 })
     .withMessage('Username must be between 3 and 20 characters')
     .custom(async (value, { req }) => {
-      const user = await prisma.user.findFirst({ where: { username: value } });
+      const user = await prisma.user.findUnique({ where: { username: value } });
       if (user) {
         throw new Error('Username already exists');
       }
