@@ -1,8 +1,8 @@
 const express = require('express');
 const morgan = require('morgan');
-const prisma = require('./lib/prisma');
 const cors = require('cors');
-const dotenv = require('dotenv');
+require('dotenv').config({ quiet: true });
+const prisma = require('./lib/prisma');
 const session = require('express-session');
 const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
 const passport = require('./config/passport');
@@ -11,10 +11,8 @@ const errorHandler = require('./middleware/errorHandler');
 const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 
-dotenv.config({ quiet: true });
-
 const sessionStore = new PrismaSessionStore(prisma, {
-  checkPeriod: 12 * 60 * 60 * 1000, 
+  checkPeriod: 12 * 60 * 60 * 1000,
   dbRecordIdIsSessionId: true,
   dbRecordIdFunction: undefined,
 });
@@ -35,10 +33,10 @@ app.use(
     saveUninitialized: false,
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      secure: process.env.NODE_ENV === 'production', 
+      secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       httpOnly: true,
-    }, 
+    },
   }),
 );
 app.use(express.json());

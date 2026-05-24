@@ -11,6 +11,6 @@ const { signUpValidation, loginValidation } = require('../validation/auth');
 
 router.post('/sign-up', validateRequest(signUpValidation), createUser);
 router.post('/login', validateRequest(loginValidation), handleLogin);
-router.get('/logout', handleLogout);
+router.post('/logout', handleLogout);
 
 module.exports = router;

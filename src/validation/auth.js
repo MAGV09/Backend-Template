@@ -13,9 +13,9 @@ const signUpValidation = [
         throw new Error('Username already exists');
       }
     }),
-    
-  body('email').trim().notEmpty(),
-  
+
+  body('email').trim().notEmpty().isEmail().withMessage('Invalid email'),
+
   body('password')
     .notEmpty()
     .withMessage('Password is required')
