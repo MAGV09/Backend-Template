@@ -2,12 +2,12 @@ function requireAuth(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect('/login');
+  res.status(401).json({ message: 'Unauthorized' });
 }
 
 function redirectIfAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
-    return res.redirect('/');
+    return res.status(403).json({ message: 'Already authenticated' });
   }
   next();
 }

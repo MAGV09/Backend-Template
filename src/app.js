@@ -1,7 +1,7 @@
 const express = require('express');
-const path = require('node:path');
 const morgan = require('morgan');
 const prisma = require('./lib/prisma');
+const cors = require('cors');
 const dotenv = require('dotenv');
 const session = require('express-session');
 const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
@@ -20,9 +20,12 @@ const sessionStore = new PrismaSessionStore(prisma, {
 });
 
 const app = express();
-app.set('views', path.join(__dirname, '../views'));
-app.set('view engine', 'ejs');
-
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  }),
+);
 app.use(morgan('dev'));
 app.use(
   session({
@@ -33,18 +36,12 @@ app.use(
     cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }, // 30 days
   }),
 );
-app.use(passport.session());
-app.use((req, res, next) => {
-  res.locals.currentUser = req.user;
-  next();
-});
-
-app.use(express.static(path.join(__dirname, '../public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(passport.session());
 
 app.use('/', indexRouter);
-app.use('/', authRouter);
+app.use('/auth', authRouter);
 
 //err handling
 app.use(errorHandler);

@@ -3,41 +3,36 @@ const bcrypt = require('bcryptjs');
 const { matchedData } = require('express-validator');
 const passport = require('../config/passport');
 
-function getSignUpPage(req, res) {
-  res.render('sign-up-form', { title: 'Sign Up' });
-}
 async function createUser(req, res) {
-  if (res.locals.validationErrors) {
-    return res.status(400).render('sign-up-form', { title: 'Sign Up' });
-  }
-  const { username, password,email } = matchedData(req);
+  const { username, password, email } = matchedData(req);
   const hashedPassword = await bcrypt.hash(password, 10);
   await prisma.user.create({
-    data:{
+    data: {
       username,
-      password:hashedPassword,
+      password: hashedPassword,
       email,
-    }
-  })
-  res.redirect('/login');
-}
-
-function getLoginPage(req, res) {
-  const errorMessages = req.session?.messages ?? [];
-   if (errorMessages.length > 0) {
-     req.session.messages = []; // clear after reading
-   }
-  res.render('login-form', { title: 'Login', authenticationError: errorMessages.at(-1) });
+    },
+  });
+  res.json({ message: 'Account created successfully' });
 }
 
 async function handleLogin(req, res, next) {
-  if (res.locals.validationErrors) {
-    return res.status(400).render('login-form', { title: 'Login' });
-  }
-  passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/login',
-    failureMessage: true,
+  passport.authenticate('local', (err, user, info) => {
+    if (err) return next(err);
+    if (!user) {
+      return res.status(401).json({ message: info?.message ?? 'Invalid credentials' });
+    }
+    req.logIn(user, (err) => {
+      if (err) return next(err);
+      res.status(200).json({
+        message: 'Logged in successfully',
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+        },
+      });
+    });
   })(req, res, next);
 }
 
@@ -52,8 +47,8 @@ function handleLogout(req, res, next) {
         return next(err);
       }
       res.clearCookie('connect.sid');
-      res.redirect('/');
+      res.status(200).json({ message: 'Logged out successfully' });
     });
   });
 }
-module.exports = { getSignUpPage, createUser, getLoginPage, handleLogin, handleLogout };
+module.exports = { createUser, handleLogin, handleLogout };
