@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('./partials/head') %>
+
+<body>
+  <h1>please log in</h1>
+  <% if (locals.authenticationError) { %>
+  <p><%= authenticationError %></p>
+<% } %>
+
+  <%- include('./partials/errors') %>
+<form action="/login" method="POST">
+  <label for="username">Username</label>
+  <input id="username" name="username" placeholder="username" type="text" value="<%= locals.formData?.username ?? '' %>" required/>
+  <label for="password">Password</label>
+  <input id="password" name="password" type="password" required/>
+  <button type="submit">Log In</button>
+</form>
+    <%- include('./partials/nav') %>
+
+</body>
+</html>
