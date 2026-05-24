@@ -1,29 +1,31 @@
-#! /usr/bin/env node
-const { Client } = require('pg');
-
-const SQL = `
-CREATE TABLE IF NOT EXISTS tablename (
-  id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  column VARCHAR ( 255 )
-);
-
-INSERT INTO tablename (column) 
-VALUES
-  ('Bryan'),
-  ('Odin'),
-  ('Damon');
-`;
+const  prisma  = require('../lib/prisma');
 
 async function main() {
-  console.log('seeding...');
-  const client = new Client({
-    connectionString: process.argv[2],
-    ssl: { rejectUnauthorized: false },
+  const user = await prisma.user.create({
+    data: {
+      name: 'Alice',
+      email: 'alice@prisma.io',
+      posts: {
+        create: {
+          title: 'Hello World',
+          content: 'This is my first post!',
+          published: true,
+        },
+      },
+    },
+    include: {
+      posts: true,
+    },
   });
-  await client.connect();
-  await client.query(SQL);
-  await client.end();
-  console.log('done');
+  console.log('Created user:', user);
 }
 
-main();
+main()
+  .then(async () => {
+    await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });

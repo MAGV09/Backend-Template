@@ -11,7 +11,8 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "nodemon": "^3.1.14",
-    "prettier": "3.7.4"
+    "prettier": "3.7.4",
+    "prisma": "^7.8.0"
   },
   "scripts": {
     "start": "node src/app.js",
@@ -23,9 +24,11 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
     "bcryptjs": "^3.0.3",
     "connect-pg-simple": "^10.0.0",
-    "dotenv": "^17.3.1",
+    "dotenv": "^17.4.2",
     "ejs": "^5.0.2",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
@@ -34,7 +37,7 @@
     "morgan": "^1.10.1",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
-    "pg": "^8.20.0"
+    "pg": "^8.21.0"
   },
   "lint-staged": {
     "**/*.{js,ts,jsx,tsx}": [
