@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const indexRouter = Router();
 const { getHomepage } = require('../controllers/Index.controller');
-
-indexRouter.get('/', getHomepage);
+const {requireAuth} = require('../middleware/auth')
+indexRouter.get('/',requireAuth, getHomepage);
 
 module.exports = indexRouter;

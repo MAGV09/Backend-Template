@@ -7,9 +7,24 @@ datasource db {
   provider = "postgresql"
 }
 
-// model Session {
-//   id        String   @id
-//   sid       String   @unique
-//   data      String
-//   expiresAt DateTime
-// }
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+}
+model User { 
+  id    Int     @id @default(autoincrement()) 
+  email String  @unique
+  username  String @unique
+  password String
+  posts Post[]
+} 
+model Post { 
+  id        Int     @id @default(autoincrement()) 
+  title     String
+  content   String?
+  published Boolean @default(false) 
+  author    User    @relation(fields: [authorId], references: [id]) 
+  authorId  Int
+} 
